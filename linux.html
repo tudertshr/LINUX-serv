@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+ <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Commandes Linux</title>
+  <link rel="stylesheet" href="linux.css" >
+ <link href="https://fonts.googleapis.com/css2?family=Alice&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <header class="linux-signature">
+  <img src="pingouin-gauche.png" alt="Pingouin gauche" class="penguin left">
+
+  <div class="text-header">
+    <p class="h0">Bienvenue sur mon site Linux</p>
+    <h1>Site conçu par TUDERT🌸 – Linux & Serveur</h1>
+    <p class="description">Commandes, bases et configuration serveur</p>
+  </div>
+
+  <img src="pingouin-droit.png" alt="Pingouin droit" class="penguin right">
+</header>
+
+ <div class="progress-bar-container">
+  <div class="progress-bar"></div>
+</div>
+
+
+  <main>
+<!-- 📚 Sommaire des Sections -->
+<div class="table-of-contents">
+  <h2>🧭 Sommaire</h2>
+  <table>
+    <tr>
+      <th>Numéro</th>
+      <th>Section</th>
+      <th>Accès</th>
+    </tr>
+    <tr>
+  <td>00</td>
+  <td>Active Directory - Création & Gestion</td>
+  <td><a href="#active-directory">🏢 </a></td>
+</tr>
+
+    <tr>
+      <td>01</td>
+      <td>Commandes réseau de base et configuration</td>
+      <td><a href="#reseau">🌐 </a></td>
+    </tr>
+    <tr>
+      <td>02</td>
+      <td>Commandes spécifiques au DHCP</td>
+      <td><a href="#dhcp">📡</a></td>
+    </tr>
+    <tr>
+      <td>03</td>
+      <td>Commandes spécifiques au DNS</td>
+      <td><a href="#dns">🌍</a></td>
+    </tr>
+    <tr>
+      <td>04</td>
+      <td>SSH</td>
+      <td><a href="#ssh">🔐</a></td>
+    </tr>
+    <tr>
+      <td>05</td>
+      <td>Firewall</td>
+      <td><a href="#firewall">🔥</a></td>
+    </tr>
+    <tr>
+      <td>06</td>
+      <td>Gestion des utilisateurs</td>
+      <td><a href="#utilisateurs">👥</a></td>
+    </tr>
+    <tr>
+      <td>07</td>
+      <td>Processus</td>
+      <td><a href="#processus">⚙️</a></td>
+    </tr>
+    <tr>
+      <td>08</td>
+      <td>Gestion des paquets APT</td>
+      <td><a href="#apt">📦</a></td>
+    </tr>
+    <tr>
+      <td>09</td>
+      <td>Gestion des disques & partitionnage</td>
+      <td><a href="#disques">💾</a></td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>Partage de fichiers sur le réseau</td>
+      <td><a href="#partage">📁 </a></td>
+    </tr>
+  </table>
+</div>
+
+
+
+
+<section id="activedirectory">
+  <h2>🌐 11. ACTIVE DIRECTORY (avec SAMBA sur Linux)</h2>
+  <div class="bloc">
+    
+    <h3>Installer les paquets nécessaires</h3>
+    <div class="cmd">
+      <pre><code>sudo apt update
+sudo apt install samba krb5-config winbind smbclient</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Met à jour les dépôts et installe Samba, Kerberos et Winbind pour la gestion de domaine.</p>
+    </div>
+
+    <h3>Configurer le fichier de configuration de Samba</h3>
+    <div class="cmd">
+      <pre><code>sudo nano /etc/samba/smb.conf</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">C’est dans ce fichier que tu configures le rôle du serveur en tant que contrôleur de domaine.</p>
+    </div>
+
+    <h3>Exemple de configuration minimale pour un contrôleur de domaine</h3>
+    <div class="cmd">
+      <pre><code>[global]
+workgroup = MONDOMAINE
+realm = MONDOMAINE.LOCAL
+netbios name = SERVEUR
+server role = active directory domain controller
+dns forwarder = 8.8.8.8
+
+[netlogon]
+path = /var/lib/samba/sysvol/mondomaine.local/scripts
+read only = no
+
+[sysvol]
+path = /var/lib/samba/sysvol
+read only = no</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Exemple d’un fichier `smb.conf` pour déclarer un domaine nommé `MONDOMAINE.LOCAL`.</p>
+    </div>
+
+    <h3>Provisionner le domaine (création du domaine)</h3>
+    <div class="cmd">
+      <pre><code>sudo samba-tool domain provision --use-rfc2307 --interactive</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Crée le domaine. Tu devras entrer le nom du domaine, le mot de passe admin, etc. lors de l’interaction.</p>
+    </div>
+
+    <h3>Démarrer Samba et Winbind</h3>
+    <div class="cmd">
+      <pre><code>sudo systemctl start samba-ad-dc
+sudo systemctl enable samba-ad-dc</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Lance le service Samba en tant que contrôleur de domaine et l’active au démarrage.</p>
+    </div>
+
+    <h3>Joindre un client Linux au domaine</h3>
+    <div class="cmd">
+      <pre><code>sudo realm join --user=Administrateur MONDOMAINE.LOCAL</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Permet à une machine Linux cliente de rejoindre le domaine `MONDOMAINE.LOCAL`.</p>
+    </div>
+
+    <h3>Vérifier les utilisateurs du domaine</h3>
+    <div class="cmd">
+      <pre><code>wbinfo -u</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Affiche la liste des utilisateurs du domaine.</p>
+    </div>
+
+    <h3>Vérifier les groupes du domaine</h3>
+    <div class="cmd">
+      <pre><code>wbinfo -g</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Affiche les groupes disponibles dans le domaine.</p>
+    </div>
+
+    <h3>Supprimer un domaine (attention !)</h3>
+    <div class="cmd">
+      <pre><code>sudo samba-tool domain demote</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Retire le serveur du rôle de contrôleur de domaine (opération risquée).</p>
+    </div>
+
+  </div>
+</section>
+
+
+    <!-- Section 1 - CONFIGURATION RÉSEAU -->
+   
+<section id="reseau">
+  <h2>1. COMMANDES RÉSEAU DE BASE ET CONFIGURATION</h2>
+  <div class="bloc">
+    <h3>Vérifier les adresses IP de la machine</h3>
+    <div class="cmd">
+      <pre><code>ip a</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Affiche toutes les interfaces réseau et leurs adresses IP, y compris les interfaces physiques et virtuelles (lo, eth0, wlan0, etc.).</p>
+    </div>
+
+    <h3>Voir l'adresse IP d'une interface spécifique</h3>
+    <div class="cmd">
+      <pre><code>ip addr show eth0</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Affiche les détails de l'interface réseau spécifiée (par exemple `eth0`) et ses adresses IP associées.</p>
+    </div>
+
+    <h3>Configurer une adresse IP statique</h3>
+    <div class="cmd">
+      <pre><code>sudo ip addr add 192.168.1.100/24 dev eth0</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Assigne une adresse IP statique (ici `192.168.1.100`) à l'interface réseau `eth0`, avec un masque de sous-réseau de 255.255.255.0 (`/24`).</p>
+    </div>
+
+    <div class="cmd">
+      <pre><code>sudo ip addr del 192.168.1.100/24 dev eth0</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Supprime l'adresse IP assignée à l'interface réseau `eth0`.</p>
+    </div>
+
+    <h3>Activer ou désactiver l'interface réseau `eth0`</h3>
+    <div class="cmd">
+      <pre><code>sudo ip link set eth0 up</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Active l'interface réseau `eth0` (la met "en marche").</p>
+    </div>
+
+    <div class="cmd">
+      <pre><code>sudo ip link set eth0 down</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Désactive l'interface réseau `eth0` (la met "hors ligne").</p>
+    </div>
+
+    <h3>Activer ou désactiver le DHCP sur une interface</h3>
+    <div class="cmd">
+      <pre><code>sudo dhclient eth0</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Active le DHCP sur l'interface réseau `eth0` et demande une adresse IP dynamique au serveur DHCP.</p>
+    </div>
+
+    <div class="cmd">
+      <pre><code>sudo dhclient -r eth0</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Libère l'adresse IP actuelle obtenue par DHCP sur l'interface `eth0`.</p>
+    </div>
+
+    <h3>Ajouter une passerelle par défaut</h3>
+    <div class="cmd">
+      <pre><code>sudo ip route add default via 192.168.1.1</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Ajoute une passerelle par défaut (ici `192.168.1.1`) pour le routage des paquets réseau.</p>
+    </div>
+
+    <h3>Redémarrer le service réseau</h3>
+    <div class="cmd">
+      <pre><code>sudo systemctl restart networking</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Redémarre le service réseau pour appliquer les nouvelles configurations sur une machine Debian/Ubuntu.</p>
+    </div>
+
+    <h3>Scanner les ports ouverts d'une machine</h3>
+    <div class="cmd">
+      <pre><code>nmap 192.168.1.1</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Scanne l'adresse IP spécifiée (`192.168.1.1`) pour détecter les ports ouverts et les services associés.</p>
+    </div>
+
+    <h3>Voir l'adresse IP publique de la machine</h3>
+    <div class="cmd">
+      <pre><code>curl ifconfig.me</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Affiche l'adresse IP publique de la machine, qui est vue par l'extérieur (si connecté à Internet).</p>
+    </div>
+
+    <h3>Vérifier la table de routage</h3>
+    <div class="cmd">
+      <pre><code>ip route</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Affiche la table de routage, indiquant les chemins disponibles pour accéder aux différentes adresses.</p>
+    </div>
+
+    <h3>Vérifier la table ARP</h3>
+    <div class="cmd">
+      <pre><code>arp -n</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Affiche la table ARP, qui contient les adresses MAC associées aux adresses IP locales.</p>
+    </div>
+
+    <h3>Voir l'adresse MAC d'une interface</h3>
+    <div class="cmd">
+      <pre><code>ip link show eth0</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Affiche l'adresse MAC de l'interface réseau `eth0`.</p>
+    </div>
+  </div>
+</section>
+
+    <!-- Section 2 - DHCP -->
+    <section id="dhcp">
+  <h2>2. COMMANDES SPECIFIQUES AU DHCP</h2>
+  <div class="bloc">
+    <h3>Configurer un serveur DHCP</h3>
+    <div class="cmd">
+      <pre><code>sudo apt-get install isc-dhcp-server</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Installe le serveur DHCP ISC sur une machine Ubuntu/Debian.</p>
+    </div>
+
+    <div class="cmd">
+      <pre><code>sudo nano /etc/dhcp/dhcpd.conf</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Ouvre le fichier de configuration principal du serveur DHCP où tu peux définir les plages d'adresses IP à distribuer.</p>
+    </div>
+
+    <h3>Configurer la plage d'adresses IP à distribuer</h3>
+    <div class="cmd">
+      <pre><code>subnet 192.168.1.0 netmask 255.255.255.0 {
+  range 192.168.1.100 192.168.1.200;
+  option routers 192.168.1.1;
+  option domain-name-servers 8.8.8.8;
+}</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Dans le fichier `dhcpd.conf`, tu définis la plage d'adresses IP que le serveur DHCP distribuera (ici de `192.168.1.100` à `192.168.1.200`), la passerelle (`option routers`) et les serveurs DNS (`option domain-name-servers`).</p>
+    </div>
+
+    <h3>Redémarrer le service DHCP après modification</h3>
+    <div class="cmd">
+      <pre><code>sudo systemctl restart isc-dhcp-server</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Redémarre le service DHCP pour appliquer les modifications dans le fichier de configuration.</p>
+    </div>
+
+    <h3>Vérifier l'état du service DHCP</h3>
+    <div class="cmd">
+      <pre><code>sudo systemctl status isc-dhcp-server</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Vérifie si le serveur DHCP fonctionne correctement après la configuration.</p>
+    </div>
+
+    <h3>Consulter les baux DHCP actifs</h3>
+    <div class="cmd">
+      <pre><code>sudo cat /var/lib/dhcp/dhcpd.leases</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Affiche les baux DHCP actifs, y compris les adresses IP attribuées aux clients.</p>
+    </div>
+
+    <h3>Voir les journaux du serveur DHCP pour les erreurs</h3>
+    <div class="cmd">
+      <pre><code>sudo tail -f /var/log/syslog | grep dhcpd</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Affiche les journaux système en temps réel, filtrés par `dhcpd`, pour surveiller l'activité du serveur DHCP et détecter des erreurs éventuelles.</p>
+    </div>
+
+  </div>
+</section>
+
+
+    <!-- Section 3 - DNS -->
+ <section id="dns">
+  <h2>3. COMMANDES SPECIFIQUES AU DNS</h2>
+  <div class="bloc">
+    <h3>Installer un serveur DNS (Bind9)</h3>
+    <div class="cmd">
+      <pre><code>sudo apt-get install bind9 bind9utils bind9-doc</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Installe le serveur DNS Bind9 sur une machine Ubuntu/Debian.</p>
+    </div>
+
+    <h3>Configurer le fichier principal de Bind9</h3>
+    <div class="cmd">
+      <pre><code>sudo nano /etc/bind/named.conf.local</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Ouvre le fichier où tu peux configurer les zones DNS locales (domaines). Tu peux ajouter des zones directes et inverses ici.</p>
+    </div>
+
+    <div class="cmd">
+      <pre><code>zone "example.com" {
+        type master;
+        file "/etc/bind/db.example.com";
+      };</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Exemple de configuration d'une zone DNS pour le domaine `example.com`. Associe une zone à un fichier de base de données (`db.example.com`).</p>
+    </div>
+
+    <h3>Configurer le fichier de base de données de la zone</h3>
+    <div class="cmd">
+      <pre><code>sudo nano /etc/bind/db.example.com</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Ouvre le fichier de zone où tu vas définir les enregistrements de ressources (A, CNAME, MX, etc.) pour ton domaine.</p>
+    </div>
+
+    <div class="cmd">
+      <pre><code>$TTL    86400
+@       IN      SOA     ns1.example.com. admin.example.com. (
+                        2023051301 ; Serial
+                        3600       ; Refresh
+                        1800       ; Retry
+                        1209600    ; Expire
+                        86400 )    ; Minimum TTL
+        IN      NS      ns1.example.com.
+        IN      A       192.168.1.100
+ns1     IN      A       192.168.1.100
+www     IN      CNAME   example.com.</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Exemple d'enregistrements dans un fichier de zone. Définit les serveurs de noms (`NS`), les adresses IP (`A`), et les alias (`CNAME`).</p>
+    </div>
+
+    <h3>Vérifier la configuration DNS</h3>
+    <div class="cmd">
+      <pre><code>sudo named-checkconf</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Vérifie la syntaxe du fichier de configuration `named.conf`. Cela permet de s'assurer qu'il n'y a pas d'erreurs avant de redémarrer le service.</p>
+    </div>
+
+    <div class="cmd">
+      <pre><code>sudo named-checkzone example.com /etc/bind/db.example.com</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Vérifie la validité du fichier de zone pour `example.com` avant de lancer Bind9.</p>
+    </div>
+
+    <h3>Redémarrer le serveur DNS</h3>
+    <div class="cmd">
+      <pre><code>sudo systemctl restart bind9</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Redémarre le service Bind9 pour appliquer les modifications dans la configuration.</p>
+    </div>
+
+    <h3>Vérifier le fonctionnement du serveur DNS</h3>
+    <div class="cmd">
+      <pre><code>dig @localhost example.com</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Effectue une requête DNS sur le serveur local pour vérifier que le domaine `example.com` est correctement résolu.</p>
+    </div>
+
+    <h3>Configurer les serveurs DNS utilisés par le système</h3>
+    <div class="cmd">
+      <pre><code>sudo nano /etc/resolv.conf</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Ouvre le fichier de configuration `resolv.conf` où tu peux définir les serveurs DNS utilisés par le système. Exemple : `nameserver 8.8.8.8` pour utiliser les DNS de Google.</p>
+    </div>
+
+    <div class="cmd">
+      <pre><code>nameserver 8.8.8.8
+nameserver 8.8.4.4</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Exemple de configuration avec les serveurs DNS publics de Google (8.8.8.8 et 8.8.4.4).</p>
+    </div>
+
+    <h3>Supprimer un serveur DNS dans le fichier `resolv.conf`</h3>
+    <div class="cmd">
+      <pre><code>sudo nano /etc/resolv.conf</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Tu peux supprimer une ligne correspondant à un serveur DNS que tu ne veux plus utiliser dans ce fichier.</p>
+    </div>
+
+    <h3>Vérifier les serveurs DNS utilisés</h3>
+    <div class="cmd">
+      <pre><code>cat /etc/resolv.conf</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Affiche les serveurs DNS actuellement utilisés par la machine, comme configuré dans le fichier `resolv.conf`.</p>
+    </div>
+
+    <h3>Vérifier les noms de domaine résolus par le DNS</h3>
+    <div class="cmd">
+      <pre><code>nslookup example.com</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Utilise `nslookup` pour interroger un serveur DNS et vérifier si le domaine `example.com` est correctement résolu.</p>
+    </div>
+
+    <h3>Utiliser `dig` pour une recherche DNS plus avancée</h3>
+    <div class="cmd">
+      <pre><code>dig example.com ANY</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Effectue une recherche DNS avancée pour obtenir tous les enregistrements disponibles pour le domaine `example.com` (A, MX, CNAME, etc.).</p>
+    </div>
+
+  </div>
+</section>
+
+
+    <!-- Section 4 - SSH -->
+ <section id="ssh">
+  <h2>4. SSH</h2>
+  <div class="bloc">
+    <h3>Installer et configurer le serveur SSH sur Linux</h3>
+
+    <div class="cmd">
+      <pre><code>sudo apt install openssh-server</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Installe le serveur SSH sur une machine Linux (distribution basée sur Debian/Ubuntu). Ce service permet l'accès à la machine à distance via SSH.</p>
+    </div>
+
+    <h3>Activer et démarrer le service SSH</h3>
+    <div class="cmd">
+      <pre><code>sudo systemctl enable ssh</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Active le démarrage automatique du service SSH au démarrage du système, ce qui permet à SSH de se lancer à chaque reboot.</p>
+    </div>
+
+    <div class="cmd">
+      <pre><code>sudo systemctl start ssh</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Démarre manuellement le service SSH sans attendre un redémarrage de la machine. Permet d'activer la connexion SSH immédiatement.</p>
+    </div>
+
+    <div class="cmd">
+      <pre><code>sudo systemctl restart ssh</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Redémarre le service SSH, utile pour appliquer des modifications de configuration (par exemple, après avoir modifié le fichier `/etc/ssh/sshd_config`).</p>
+    </div>
+
+    <h3>Vérification du service SSH</h3>
+    <div class="cmd">
+      <pre><code>sudo systemctl status ssh</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Affiche le statut du service SSH pour vérifier qu'il fonctionne correctement. Si le service est actif, tu verras "active (running)" comme résultat.</p>
+    </div>
+
+    <h3>Modifier la configuration du serveur SSH</h3>
+    <div class="cmd">
+      <pre><code>sudo nano /etc/ssh/sshd_config</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Ouvre le fichier de configuration du serveur SSH. Tu peux y ajuster des paramètres comme le port d'écoute, l'authentification par mot de passe ou par clé, etc.</p>
+    </div>
+
+    <div class="cmd">
+      <pre><code>Port 22</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Change le port d'écoute du serveur SSH. Par défaut, SSH utilise le port 22, mais tu peux le modifier pour des raisons de sécurité.</p>
+    </div>
+
+    <div class="cmd">
+      <pre><code>PermitRootLogin no</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Désactive la possibilité de se connecter en tant que root via SSH, ce qui améliore la sécurité du serveur.</p>
+    </div>
+
+    <div class="cmd">
+      <pre><code>PasswordAuthentication yes</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Permet l'authentification par mot de passe. Tu peux la désactiver et utiliser uniquement des clés SSH pour renforcer la sécurité.</p>
+    </div>
+
+    <h3>Redémarrer SSH après modification de configuration</h3>
+    <div class="cmd">
+      <pre><code>sudo systemctl restart ssh</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Applique les modifications du fichier `sshd_config` en redémarrant le service SSH.</p>
+    </div>
+
+    <h3>Tester la connexion SSH</h3>
+    <div class="cmd">
+      <pre><code>ssh user@ip_address</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Teste la connexion SSH à la machine distante. Remplace `user` par le nom d'utilisateur et `ip_address` par l'adresse IP de la machine à laquelle tu veux te connecter.</p>
+    </div>
+
+    <h3>Générer des clés SSH (si non déjà fait)</h3>
+    <div class="cmd">
+      <pre><code>ssh-keygen</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Génère une paire de clés SSH (publique et privée) pour l'authentification sans mot de passe. Tu peux ensuite copier la clé publique sur le serveur avec `ssh-copy-id`.</p>
+    </div>
+
+    <div class="cmd">
+      <pre><code>ssh-copy-id user@ip_address</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Copie la clé publique SSH sur le serveur distant, ce qui permet une connexion sans mot de passe via SSH.</p>
+    </div>
+
+    <h3>Voir les connexions SSH actives</h3>
+    <div class="cmd">
+      <pre><code>who</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Affiche les utilisateurs actuellement connectés à la machine via SSH.</p>
+    </div>
+
+    <div class="cmd">
+      <pre><code>ss -tuln | grep :22</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Vérifie si le port SSH (par défaut, le port 22) est ouvert et écouté par le serveur SSH.</p>
+    </div>
+
+    <h3>Vérifier la sécurité de la connexion SSH</h3>
+    <div class="cmd">
+      <pre><code>sudo sshd -t</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Vérifie la syntaxe du fichier de configuration `sshd_config` pour détecter d'éventuelles erreurs ou incohérences dans la configuration SSH.</p>
+    </div>
+  </div>
+</section>
+
+
+    <!-- Section 5 - FIREWALL -->
+<section id="firewall">
+  <h2>5. FIREWALL</h2>
+  <div class="bloc">
+
+    <!-- Activer le pare-feu -->
+    <div class="cmd">
+      <h3>Activer le pare-feu (UFW)</h3>
+      <pre><code>sudo ufw enable</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Active le pare-feu UFW (Uncomplicated Firewall) pour protéger le système.</p>
+    </div>
+
+    <!-- Désactiver le pare-feu -->
+    <div class="cmd">
+      <h3 >Désactiver le pare-feu (UFW)</h3>
+      <pre><code>sudo ufw disable</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Désactive le pare-feu UFW, ce qui ouvre l'accès à toutes les connexions entrantes.</p>
+    </div>
+
+    <!-- Vérifier le statut du pare-feu -->
+    <div class="cmd">
+      <h3>Vérifier le statut du pare-feu (UFW)</h3>
+      <pre><code>sudo ufw status</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Affiche l'état actuel du pare-feu UFW et les règles en place.</p>
+    </div>
+
+    <!-- Autoriser un service spécifique (par exemple SSH) -->
+    <div class="cmd">
+      <h3>Autoriser SSH (port 22)</h3>
+      <pre><code>sudo ufw allow 22</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Permet les connexions SSH sur le port 22 via le pare-feu UFW.</p>
+    </div>
+
+    <!-- Bloquer un service spécifique (par exemple SSH) -->
+    <div class="cmd">
+      <h3>Bloquer SSH (port 22)</h3>
+      <pre><code>sudo ufw deny 22</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Bloque les connexions SSH sur le port 22 via le pare-feu UFW.</p>
+    </div>
+
+    <!-- Autoriser une adresse IP spécifique -->
+    <div class="cmd">
+      <h3>Autoriser une adresse IP spécifique</h3>
+      <pre><code>sudo ufw allow from 192.168.1.100</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Permet à l'adresse IP 192.168.1.100 d'accéder à votre machine.</p>
+    </div>
+
+    <!-- Bloquer une adresse IP spécifique -->
+    <div class="cmd">
+      <h3>Bloquer une adresse IP spécifique</h3>
+      <pre><code>sudo ufw deny from 192.168.1.100</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Bloque l'accès à votre machine pour l'adresse IP 192.168.1.100.</p>
+    </div>
+
+    <!-- Autoriser une plage de ports -->
+    <div class="cmd">
+      <h3>Autoriser une plage de ports</h3>
+      <pre><code>sudo ufw allow 1000:2000/tcp</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Permet les connexions TCP sur les ports de la plage 1000 à 2000.</p>
+    </div>
+
+    <!-- Bloquer une plage de ports -->
+    <div class="cmd">
+      <h3>Bloquer une plage de ports</h3>
+      <pre><code>sudo ufw deny 1000:2000/tcp</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Bloque les connexions TCP sur les ports de la plage 1000 à 2000.</p>
+    </div>
+
+    <!-- Réinitialiser les règles du pare-feu -->
+    <div class="cmd">
+      <h3>Réinitialiser les règles du pare-feu</h3>
+      <pre><code>sudo ufw reset</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Réinitialise toutes les règles du pare-feu à leur état par défaut.</p>
+    </div>
+
+    <!-- Ajouter une règle pour autoriser HTTP (port 80) -->
+    <div class="cmd">
+      <h3 >Autoriser HTTP (port 80)</h3>
+      <pre><code>sudo ufw allow 80</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Permet l'accès HTTP (port 80) à votre serveur.</p>
+    </div>
+
+    <!-- Ajouter une règle pour autoriser HTTPS (port 443) -->
+    <div class="cmd">
+      <h3>Autoriser HTTPS (port 443)</h3>
+      <pre><code>sudo ufw allow 443</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Permet l'accès HTTPS (port 443) à votre serveur.</p>
+    </div>
+  </div>
+</section>
+
+
+
+    <!-- Section 6 - UTILISATEURS -->
+<section id="utilisateurs">
+  <h2>6. GESTION DES UTILISATEURS</h2>
+  <div class="bloc">
+
+
+    <!-- Créer un utilisateur -->
+    <div class="cmd">
+      <h3>Créer un nouvel utilisateur</h3>
+      <pre><code>sudo adduser nom_utilisateur</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Crée un nouvel utilisateur avec le nom spécifié.</p>
+    </div>
+
+    <!-- Créer un groupe -->
+    <div class="cmd">
+      <h3>Créer un groupe</h3>
+      <pre><code>sudo groupadd nom_groupe</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Crée un groupe avec le nom spécifié.</p>
+    </div>
+
+    <!-- Ajouter un utilisateur à un groupe -->
+    <div class="cmd">
+      <h3>Ajouter un utilisateur à un groupe</h3>
+      <pre><code>sudo usermod -aG nom_groupe nom_utilisateur</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Ajoute un utilisateur à un groupe spécifié.</p>
+    </div>
+
+    <!-- Donner des droits sudo à un utilisateur -->
+    <div class="cmd">
+      <h3>Donner des droits sudo</h3>
+      <pre><code>sudo usermod -aG sudo nom_utilisateur</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Ajoute un utilisateur au groupe sudo, lui permettant d'exécuter des commandes en tant que superutilisateur.</p>
+    </div>
+
+    <!-- Modifier le mot de passe d'un utilisateur -->
+    <div class="cmd">
+      <h3 >Changer le mot de passe d'un utilisateur</h3>
+      <pre><code>sudo passwd nom_utilisateur</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Permet de changer le mot de passe d'un utilisateur.</p>
+    </div>
+
+    <!-- Verrouiller un compte utilisateur -->
+    <div class="cmd">
+      <h3>Verrouiller un compte utilisateur</h3>
+      <pre><code>sudo usermod -L nom_utilisateur</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Verrouille le compte utilisateur, l'empêchant de se connecter.</p>
+    </div>
+
+    <!-- Déverrouiller un compte utilisateur -->
+    <div class="cmd">
+      <h3>Déverrouiller un compte utilisateur</h3>
+      <pre><code>sudo usermod -U nom_utilisateur</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Déverrouille un compte utilisateur, permettant la connexion à nouveau.</p>
+    </div>
+
+    <!-- Supprimer un utilisateur -->
+    <div class="cmd">
+      <h3 >Supprimer un utilisateur</h3>
+      <pre><code>sudo deluser nom_utilisateur</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Supprime un utilisateur du système.</p>
+    </div>
+
+    <!-- Supprimer un utilisateur et son répertoire personnel -->
+    <div class="cmd">
+      <h3>Supprimer un utilisateur avec son répertoire personnel</h3>
+      <pre><code>sudo deluser --remove-home nom_utilisateur</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Supprime un utilisateur et son répertoire personnel du système.</p>
+    </div>
+
+    <!-- Supprimer un groupe -->
+    <div class="cmd">
+      <h3 >Supprimer un groupe</h3>
+      <pre><code>sudo groupdel nom_groupe</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Supprime un groupe du système.</p>
+    </div>
+
+    <!-- Afficher les utilisateurs sur le système -->
+    <div class="cmd">
+      <h3>Lister tous les utilisateurs</h3>
+      <pre><code>cat /etc/passwd</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Affiche la liste de tous les utilisateurs présents sur le système.</p>
+    </div>
+
+    <!-- Afficher les groupes sur le système -->
+    <div class="cmd">
+      <h3>Lister tous les groupes</h3>
+      <pre><code>cat /etc/group</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Affiche la liste de tous les groupes présents sur le système.</p>
+    </div>
+
+    <!-- Afficher les groupes auxquels un utilisateur appartient -->
+    <div class="cmd">
+      <h3 >Voir les groupes d'un utilisateur</h3>
+      <pre><code>groups nom_utilisateur</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Affiche les groupes auxquels appartient un utilisateur spécifique.</p>
+    </div>
+
+    <!-- Ajouter un utilisateur à un groupe existant -->
+    <div class="cmd">
+      <h3 >Ajouter un utilisateur à un groupe existant</h3>
+      <pre><code>sudo usermod -aG nom_groupe nom_utilisateur</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Ajoute un utilisateur à un groupe déjà existant.</p>
+    </div>
+  </div>
+</section>
+
+
+    <!-- Section 7 - PROCESSUS -->
+    <section>
+      <h2>7. PROCESSUS</h2>
+      <div class="bloc">
+
+        <div class="cmd">
+          <pre><code>ps aux</code></pre>
+          <button class="toggle">Voir explication</button>
+          <p class="desc">Affiche tous les processus en cours d'exécution.</p>
+        </div>
+
+        <div class="cmd">
+          <pre><code>top</code></pre>
+          <button class="toggle">Voir explication</button>
+          <p class="desc">Affiche une vue dynamique des processus en temps réel.</p>
+        </div>
+
+        <div class="cmd">
+          <pre><code>kill <pid></code></pre>
+          <button class="toggle">Voir explication</button>
+          <p class="desc">Termine un processus en utilisant son identifiant de processus (PID).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 8 - GESTION DES PAQUETS (APT) -->
+    <section id="processus">
+      <h2>8. GESTION DES PAQUETS (APT)</h2>
+      <div class="bloc">
+
+        <div class="cmd">
+          <pre><code>sudo apt update</code></pre>
+          <button class="toggle">Voir explication</button>
+          <p class="desc">Met à jour la liste des paquets disponibles dans les dépôts.</p>
+        </div>
+
+        <div class="cmd">
+          <pre><code>sudo apt upgrade</code></pre>
+          <button class="toggle">Voir explication</button>
+          <p class="desc">Met à jour les paquets installés à leur dernière version.</p>
+        </div>
+
+        <div class="cmd">
+          <pre><code>sudo apt install nom-du-paquet</code></pre>
+          <button class="toggle">Voir explication</button>
+          <p class="desc">Installe un paquet spécifique à partir des dépôts.</p>
+        </div>
+
+        <div class="cmd">
+          <pre><code>sudo apt remove nom-du-paquet</code></pre>
+          <button class="toggle">Voir explication</button>
+          <p class="desc">Supprime un paquet du système.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 9 - GESTION DES DISQUES (PARTITIONNAGE) -->
+    <section id="apt">
+      <h2>9. GESTION DES DISQUES (PARTITIONNAGE)</h2>
+      <div class="bloc">
+ 
+        <div class="cmd">
+          <pre><code>sudo fdisk -l</code></pre>
+          <button class="toggle">Voir explication</button>
+          <p class="desc">Affiche la liste des partitions et des disques présents sur le système.</p>
+        </div>
+
+        <div class="cmd">
+          <pre><code>sudo fdisk /dev/sda</code></pre>
+          <button class="toggle">Voir explication</button>
+          <p class="desc">Ouvre l'outil `fdisk` pour manipuler les partitions du disque `/dev/sda`.</p>
+        </div>
+
+        <div class="cmd">
+          <pre><code>sudo mkfs.ext4 /dev/sda1</code></pre>
+          <button class="toggle">Voir explication</button>
+          <p class="desc">Formate la partition `/dev/sda1` avec le système de fichiers ext4.</p>
+        </div>
+
+        <div class="cmd">
+          <pre><code>sudo mount /dev/sda1 /mnt</code></pre>
+          <button class="toggle">Voir explication</button>
+          <p class="desc">Monte la partition `/dev/sda1` dans le répertoire `/mnt`.</p>
+        </div>
+      </div>
+    </section>
+        <!-- Section 10 - 📁 10. PARTAGE DE FICHIERS SUR LE RÉSEAU -->
+     <section id="partage">
+  <h2>10. PARTAGE DE FICHIERS SUR LE RÉSEAU</h2>
+  <div class="bloc">
+    <h3>SCP (via SSH)</h3>
+    <div class="cmd">
+      <pre><code>scp fichier.txt user@192.168.1.5:/home/user/</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Copie un fichier vers une autre machine via le protocole SSH.</p>
+    </div>
+
+    <h3>Samba</h3>
+    <div class="cmd">
+      <pre><code>sudo apt install samba</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Installe le service Samba pour le partage réseau de fichiers.</p>
+    </div>
+
+    <div class="cmd">
+      <pre><code>// Modifier /etc/samba/smb.conf pour ajouter un partage</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Ajoute un dossier partagé visible sur le réseau.</p>
+    </div>
+
+    <div class="cmd">
+      <pre><code>sudo systemctl restart smbd</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Redémarre le service Samba pour appliquer les modifications.</p>
+    </div>
+  </div>
+</section>
+
+<section id="fin">
+  <h2>🎉 Félicitations !🖥️</h2>
+  <p>Tu as atteint la fin. Félicitations, maintenant il est temps de revenir en haut.</p>
+  <a href="#top" class="btn">Retour en haut</a>
+</section>
+
+
+  </main>
+
+  <footer>
+    <p>© 2025 | Support d’apprentissage Linux par SAHRAOUI-TUDERT🐧</p>
+  </footer>
+
+
+  <script src="linux.js"></script> 
+</body>
+
+
+</html>

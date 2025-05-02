@@ -1,0 +1,295 @@
+
+/* 📚 Table des matières */
+.table-of-contents {
+  background-color: #1a1a1a;
+  padding: 20px;
+  color: #33ff33;
+  font-family: 'Courier New', Courier, monospace;
+  border-bottom: 2px solid #33ff33;
+  margin-bottom: 2rem;
+}
+
+.table-of-contents h2 {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-family: 'Audiowide', sans-serif;
+}
+
+.table-of-contents table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-of-contents th,
+.table-of-contents td {
+  padding: 10px;
+  border: 1px solid #33ff33;
+  text-align: left;
+}
+
+.table-of-contents a {
+  color: #33ff33;
+  text-decoration: none;
+}
+
+.table-of-contents a:hover {
+  text-decoration: underline;
+}
+
+
+
+
+/* Style terminal-hacker */
+body {
+  background-color: #121212;
+  color: #33ff33;
+  font-family: 'Courier New', Courier, monospace;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #1a1a1a;
+  text-align: left;
+  padding: 2rem;
+  border-bottom: 2px solid #33ff33;
+}
+
+/* Supprimé h0 car ce n’est pas une balise valide */
+/* Remplacé par une classe .h0 */
+
+main {
+  padding: 2rem;
+}
+
+section {
+  margin-bottom: 3rem;
+  border-left: 10px solid #33ff33;
+  padding-left: 1rem;
+}
+
+h2 {
+  color: #00ffff;
+  margin-bottom: 1rem;
+}
+
+h3 {
+  color: #ff5722;
+}
+
+pre {
+  background-color: #1e1e1e;
+  padding: 0.5rem;
+  border-left: 4px solid #00ff00;
+  overflow-x: auto;
+}
+
+.cmd {
+  margin-bottom: 1.5rem;
+}
+
+button.toggle {
+  background-color: #222;
+  border: 1px solid #33ff33;
+  color: #33ff33;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+
+button.toggle:hover {
+  background-color: #33ff33;
+  color: #000;
+}
+
+.desc {
+  display: none;
+  margin-top: 0.5rem;
+  color: #ccc;
+  font-size: 0.95rem;
+}
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  border-top: 2px solid #33ff33;
+  background-color: #1a1a1a;
+  color: #666;
+}
+
+/* === Signature spéciale en haut === */
+.linux-signature {
+  background-color: #1b1b1b;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  font-family: 'Courier New', Courier, monospace;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+  border-bottom: 2px solid #00ffcc;
+}
+
+.text-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+}
+
+.h0 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #ffd700;
+  margin: 0 0 0.5rem 0;
+}
+
+.linux-signature h1 {
+  font-size: 20px;
+  color:deeppink;
+  margin: 0;
+  font-family: 'Alice', sans-serif;
+}
+
+.description {
+  font-size: 0.9rem;
+  color: #cccccc;
+  margin-top: 0.3rem;
+}
+
+.penguin {
+  width: 70px;
+  height: auto;
+}
+
+.penguin.left {
+  margin-right: 50px;
+   margin-left: 180px;
+}
+
+.penguin.right {
+  margin-left: 50px;
+   margin-right: 180px;
+}
+
+
+/* Conteneur de la barre de progression, positionné sur le côté */
+.progress-bar-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 10px; /* largeur de la barre */
+  height: 100%;
+  background-color: #333; /* couleur de fond de la barre */
+  z-index: 9999;
+}
+
+/* La barre elle-même qui va se remplir en fonction du scroll */
+.progress-bar {
+  width: 100%;
+  height: 0;
+  background-color: #33ff33; /* couleur de la barre */
+  transition: height 0.2s ease-out;
+}
+
+
+
+
+
+/* Style de base pour la section fin */
+#fin {
+  text-align: center;
+  padding: 40px 0;
+  background-color: #1d1f20; /* Fond sombre inspiré des terminaux */
+  color: #00ff00; /* Texte vert fluo */
+  font-family: 'Courier New', Courier, monospace; /* Police de type terminal */
+  border-radius: 5px;
+  margin-top: 50px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Titre H2 - Apparence de commande */
+#fin h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+  animation: blinkText 0.8s infinite alternate; /* Animation clignotante */
+}
+
+/* Animation de texte clignotant pour le titre */
+@keyframes blinkText {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Description avec effet d'apparition type ligne de commande */
+#fin p {
+  font-size: 1.2em;
+  margin-bottom: 30px;
+  animation: typing 3s steps(30) 1s forwards; /* Effet de frappe type terminal */
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 4px solid #00ff00; /* Curseur de terminal */
+}
+
+/* Animation de "tape" du texte */
+@keyframes typing {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+/* Bouton de retour avec effet style terminal */
+#fin .btn {
+  padding: 12px 25px;
+  background-color: #333; /* Fond sombre pour le bouton */
+  color: #00ff00; /* Texte vert fluo */
+  font-size: 1.1em;
+  border: 2px solid #00ff00; /* Bordure verte */
+  border-radius: 5px;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#fin .btn:hover {
+  background-color: #00ff00; /* Le fond devient vert au survol */
+  color: #1d1f20; /* Le texte devient noir */
+  transform: scale(1.1);
+}
+
+/* Animation du fond de la section */
+#fin:before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -50%;
+  width: 200%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, #00ff00, transparent);
+  animation: scan 2s infinite linear;
+}
+
+@keyframes scan {
+  0% {
+    left: -50%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+
