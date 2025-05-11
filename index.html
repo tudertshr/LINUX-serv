@@ -42,8 +42,8 @@
     </tr>
     <tr>
   <td>00</td>
-  <td>Active Directory - Création & Gestion</td>
-  <td><a href="#active-directory">🏢 </a></td>
+  <td>INSTALLATION D’OPENLDAP + phpLDAPadmin sur Ubuntu </td>
+  <td><a href="#active-directory"> 🏢 </a></td>
 </tr>
 
     <tr>
@@ -102,86 +102,145 @@
 
 
 
-<section id="activedirectory">
-  <h2>🌐 11. ACTIVE DIRECTORY (avec SAMBA sur Linux)</h2>
+
+<section>
+  <h2>⚙️ 00. PARAMÈTRES À CONFIGURER AVANT L’INSTALLATION</h2>
   <div class="bloc">
-    
-    <h3>Installer les paquets nécessaires</h3>
+
+    <button class="toggle">Voir explication</button>
+
+    <div class="desc">
+      <ul>
+        <li><strong>🔹 Nom d’hôte (hostname) :</strong> <code>admin.dom10.dz</code><br>
+            Utilisé pour identifier le serveur LDAP sur le réseau. C’est le nom FQDN de ton serveur, enregistré dans <code>/etc/hosts</code>.</li>
+
+        <li><strong>🔹 Adresse IP du serveur :</strong> <code>192.168.1.10</code><br>
+            IP statique assignée à ton serveur. Doit correspondre à l’entrée du fichier hosts associée au nom <code>admin.dom10.dz</code>.</li>
+
+        <li><strong>🔹 Nom de domaine DNS :</strong> <code>dom10.dz</code><br>
+            Sert à générer le DN de base. C’est le domaine logique de ton infrastructure LDAP.</li>
+
+        <li><strong>🔹 Organisation :</strong> <code>Dom10 Inc.</code><br>
+            Nom logique de ton organisation, utilisé dans la structure LDAP. Peut être modifié librement.</li>
+
+        <li><strong>🔹 Base DN :</strong> <code>dc=dom10,dc=dz</code><br>
+            Racine de ton annuaire LDAP, générée automatiquement à partir de ton domaine DNS.</li>
+
+        <li><strong>🔹 DN administrateur :</strong> <code>cn=admin,dc=dom10,dc=dz</code><br>
+            Identifiant complet de l’utilisateur administrateur LDAP. Utilisé pour se connecter via phpLDAPadmin.</li>
+
+        <li><strong>🔹 Mot de passe LDAP admin :</strong> <code>********</code><br>
+            Défini lors de l’installation d’OpenLDAP. Garde-le bien en mémoire, il est requis pour toutes les opérations admin.</li>
+
+        <li><strong>🔹 URI LDAP :</strong> <code>ldap://admin.dom10.dz</code><br>
+            Adresse LDAP utilisée pour accéder au serveur. Elle est basée sur ton nom d’hôte complet.</li>
+
+        <li><strong>🔹 URI secondaire (optionnel) :</strong> <code>(aucun)</code><br>
+            Tu peux ignorer ce champ à moins d’avoir un deuxième serveur LDAP (réplica ou maître).</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+
+
+
+
+
+
+
+
+<section id="#active-directory">
+  <h2>🏢 00. INSTALLATION D’OPENLDAP + phpLDAPadmin sur Ubuntu</h2>
+  <div class="bloc">
+
+    <h3>Définir le nom d’hôte</h3>
+    <div class="cmd">
+      <pre><code>sudo hostnamectl set-hostname admin.dom10.dz
+echo "192.168.1.10 admin.dom10.dz SERV-PC" | sudo tee -a /etc/hosts</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Définit le nom d’hôte complet du serveur (<code>admin.dom10.dz</code>) et l’ajoute au fichier hosts avec son nom NetBIOS <code>SERV-PC</code>.</p>
+    </div>
+
+    <h3>Installer OpenLDAP et les utilitaires</h3>
     <div class="cmd">
       <pre><code>sudo apt update
-sudo apt install samba krb5-config winbind smbclient</code></pre>
+sudo apt install slapd ldap-utils</code></pre>
       <button class="toggle">Voir explication</button>
-      <p class="desc">Met à jour les dépôts et installe Samba, Kerberos et Winbind pour la gestion de domaine.</p>
+      <p class="desc">Met à jour les paquets et installe le serveur OpenLDAP (slapd) et les outils LDAP (ldap-utils).</p>
     </div>
 
-    <h3>Configurer le fichier de configuration de Samba</h3>
+    <h3>Modifier la configuration LDAP du client</h3>
     <div class="cmd">
-      <pre><code>sudo nano /etc/samba/smb.conf</code></pre>
+      <pre><code>sudo nano /etc/ldap/ldap.conf</code></pre>
       <button class="toggle">Voir explication</button>
-      <p class="desc">C’est dans ce fichier que tu configures le rôle du serveur en tant que contrôleur de domaine.</p>
+      <p class="desc">Dans le fichier, décommente et remplace les lignes suivantes :
+<pre><code>BASE   dc=dom10,dc=dz
+URI    ldap://admin.dom10.dz</code></pre></p>
     </div>
 
-    <h3>Exemple de configuration minimale pour un contrôleur de domaine</h3>
+    <h3>Configurer le serveur LDAP avec l’assistant</h3>
     <div class="cmd">
-      <pre><code>[global]
-workgroup = MONDOMAINE
-realm = MONDOMAINE.LOCAL
-netbios name = SERVEUR
-server role = active directory domain controller
-dns forwarder = 8.8.8.8
-
-[netlogon]
-path = /var/lib/samba/sysvol/mondomaine.local/scripts
-read only = no
-
-[sysvol]
-path = /var/lib/samba/sysvol
-read only = no</code></pre>
+      <pre><code>sudo dpkg-reconfigure slapd</code></pre>
       <button class="toggle">Voir explication</button>
-      <p class="desc">Exemple d’un fichier `smb.conf` pour déclarer un domaine nommé `MONDOMAINE.LOCAL`.</p>
+      <p class="desc">Relance la configuration du serveur :
+        <br>• Nom de domaine DNS : <code>dom10.dz</code>
+        <br>• Organisation : <code>Dom10 Inc.</code>
+        <br>• Base DN générée : <code>dc=dom10,dc=dz</code>
+        <br>• DN admin : <code>cn=admin,dc=dom10,dc=dz</code>
+        <br>• Mot de passe : à définir.
+      </p>
     </div>
 
-    <h3>Provisionner le domaine (création du domaine)</h3>
+    <h3>Installer phpLDAPadmin</h3>
     <div class="cmd">
-      <pre><code>sudo samba-tool domain provision --use-rfc2307 --interactive</code></pre>
+      <pre><code>sudo apt install phpldapadmin -y</code></pre>
       <button class="toggle">Voir explication</button>
-      <p class="desc">Crée le domaine. Tu devras entrer le nom du domaine, le mot de passe admin, etc. lors de l’interaction.</p>
+      <p class="desc">Installe l’interface web phpLDAPadmin pour administrer LDAP via navigateur.</p>
     </div>
 
-    <h3>Démarrer Samba et Winbind</h3>
+    <h3>Configurer phpLDAPadmin</h3>
     <div class="cmd">
-      <pre><code>sudo systemctl start samba-ad-dc
-sudo systemctl enable samba-ad-dc</code></pre>
+      <pre><code>sudo nano /etc/phpldapadmin/config.php</code></pre>
       <button class="toggle">Voir explication</button>
-      <p class="desc">Lance le service Samba en tant que contrôleur de domaine et l’active au démarrage.</p>
+      <p class="desc">Modifie les lignes suivantes :
+<pre><code>$servers->setValue('server','host','admin.dom10.dz');
+$servers->setValue('login','auth_type','session');
+$servers->setValue('server','base',array('dc=dom10,dc=dz'));
+$servers->setValue('login','bind_id','cn=admin,dc=dom10,dc=dz');</code></pre></p>
     </div>
 
-    <h3>Joindre un client Linux au domaine</h3>
+    <h3>Configurer Apache pour phpLDAPadmin</h3>
     <div class="cmd">
-      <pre><code>sudo realm join --user=Administrateur MONDOMAINE.LOCAL</code></pre>
+      <pre><code>sudo nano /etc/apache2/conf-available/phpldapadmin.conf</code></pre>
       <button class="toggle">Voir explication</button>
-      <p class="desc">Permet à une machine Linux cliente de rejoindre le domaine `MONDOMAINE.LOCAL`.</p>
+      <p class="desc">Vérifie que la ligne suivante est présente :
+<pre><code>Alias /phpldapadmin /usr/share/phpldapadmin</code></pre>
+Ajoute ensuite :
+<pre><code>&lt;Directory /usr/share/phpldapadmin/htdocs/&gt;
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Require all granted
+&lt;/Directory&gt;</code></pre></p>
     </div>
 
-    <h3>Vérifier les utilisateurs du domaine</h3>
+    <h3>Activer la configuration Apache et redémarrer</h3>
     <div class="cmd">
-      <pre><code>wbinfo -u</code></pre>
+      <pre><code>sudo a2enconf phpldapadmin
+sudo systemctl restart apache2</code></pre>
       <button class="toggle">Voir explication</button>
-      <p class="desc">Affiche la liste des utilisateurs du domaine.</p>
+      <p class="desc">Active la config Apache pour phpLDAPadmin et redémarre le serveur web Apache.</p>
     </div>
 
-    <h3>Vérifier les groupes du domaine</h3>
+    <h3>Accéder à l’interface phpLDAPadmin</h3>
     <div class="cmd">
-      <pre><code>wbinfo -g</code></pre>
+      <pre><code>http://admin.dom10.dz/phpldapadmin</code></pre>
       <button class="toggle">Voir explication</button>
-      <p class="desc">Affiche les groupes disponibles dans le domaine.</p>
-    </div>
-
-    <h3>Supprimer un domaine (attention !)</h3>
-    <div class="cmd">
-      <pre><code>sudo samba-tool domain demote</code></pre>
-      <button class="toggle">Voir explication</button>
-      <p class="desc">Retire le serveur du rôle de contrôleur de domaine (opération risquée).</p>
+      <p class="desc">Ouvre ton navigateur et connecte-toi avec :
+        <br>• DN : <code>cn=admin,dc=dom10,dc=dz</code>
+        <br>• Mot de passe : celui que tu as défini pendant la config.
+      </p>
     </div>
 
   </div>
@@ -820,7 +879,7 @@ nameserver 8.8.4.4</code></pre>
 
 
     <!-- Section 7 - PROCESSUS -->
-    <section id ="processus">
+    <section id="processus">
       <h2>7. PROCESSUS</h2>
       <div class="bloc">
 
