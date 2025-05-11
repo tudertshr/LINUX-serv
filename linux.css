@@ -1,295 +1,331 @@
-
-/* 📚 Table des matières */
-.table-of-contents {
-  background-color: #1a1a1a;
-  padding: 20px;
-  color: #33ff33;
-  font-family: 'Courier New', Courier, monospace;
-  border-bottom: 2px solid #33ff33;
-  margin-bottom: 2rem;
-}
-
-.table-of-contents h2 {
-  font-size: 1.6rem;
-  margin-bottom: 1rem;
-  text-align: center;
-  font-family: 'Audiowide', sans-serif;
-}
-
-.table-of-contents table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.table-of-contents th,
-.table-of-contents td {
-  padding: 10px;
-  border: 1px solid #33ff33;
-  text-align: left;
-}
-
-.table-of-contents a {
-  color: #33ff33;
-  text-decoration: none;
-}
-
-.table-of-contents a:hover {
-  text-decoration: underline;
-}
-
-
-
-
-/* Style terminal-hacker */
+/* Styles de base pour le conteneur et les modules */
 body {
-  background-color: #121212;
-  color: #33ff33;
-  font-family: 'Courier New', Courier, monospace;
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: url('CCNA001.jpg') no-repeat center center fixed;
+    background-size: cover;
+    backdrop-filter: blur(0px);
+    transition: background 0.5s ease;
+    overflow: auto; /* Empêche le défilement */
 }
 
-header {
-  background-color: #1a1a1a;
-  text-align: left;
-  padding: 2rem;
-  border-bottom: 2px solid #33ff33;
-}
-
-/* Supprimé h0 car ce n’est pas une balise valide */
-/* Remplacé par une classe .h0 */
-
-main {
-  padding: 2rem;
-}
-
-section {
-  margin-bottom: 3rem;
-  border-left: 10px solid #33ff33;
-  padding-left: 1rem;
-}
-
-h2 {
-  color: #00ffff;
-  margin-bottom: 1rem;
-}
-
-h3 {
-  color: #ff5722;
-}
-
-pre {
-  background-color: #1e1e1e;
-  padding: 0.5rem;
-  border-left: 4px solid #00ff00;
-  overflow-x: auto;
-}
-
-.cmd {
-  margin-bottom: 1.5rem;
-}
-
-button.toggle {
-  background-color: #222;
-  border: 1px solid #33ff33;
-  color: #33ff33;
-  padding: 0.4rem 0.8rem;
-  cursor: pointer;
-  margin-top: 0.5rem;
-}
-
-button.toggle:hover {
-  background-color: #33ff33;
-  color: #000;
-}
-
-.desc {
-  display: none;
-  margin-top: 0.5rem;
-  color: #ccc;
-  font-size: 0.95rem;
-}
-
-footer {
-  text-align: center;
-  padding: 1rem;
-  border-top: 2px solid #33ff33;
-  background-color: #1a1a1a;
-  color: #666;
-}
-
-/* === Signature spéciale en haut === */
-.linux-signature {
-  background-color: #1b1b1b;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 15px;
-  font-family: 'Courier New', Courier, monospace;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
-  border-bottom: 2px solid #00ffcc;
-}
-
-.text-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  flex: 1;
-}
-
-.h0 {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #ffd700;
-  margin: 0 0 0.5rem 0;
-}
-
-.linux-signature h1 {
-  font-size: 20px;
-  color:deeppink;
-  margin: 0;
-  font-family: 'Alice', sans-serif;
-}
-
-.description {
-  font-size: 0.9rem;
-  color: #cccccc;
-  margin-top: 0.3rem;
-}
-
-.penguin {
-  width: 70px;
-  height: auto;
-}
-
-.penguin.left {
-  margin-right: 50px;
-   margin-left: 180px;
-}
-
-.penguin.right {
-  margin-left: 50px;
-   margin-right: 180px;
-}
-
-
-/* Conteneur de la barre de progression, positionné sur le côté */
-.progress-bar-container {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 10px; /* largeur de la barre */
-  height: 100%;
-  background-color: #333; /* couleur de fond de la barre */
-  z-index: 9999;
-}
-
-/* La barre elle-même qui va se remplir en fonction du scroll */
-.progress-bar {
-  width: 100%;
-  height: 0;
-  background-color: #33ff33; /* couleur de la barre */
-  transition: height 0.2s ease-out;
-}
-
-
-
-
-
-/* Style de base pour la section fin */
-#fin {
-  text-align: center;
-  padding: 40px 0;
-  background-color: #1d1f20; /* Fond sombre inspiré des terminaux */
-  color: #00ff00; /* Texte vert fluo */
-  font-family: 'Courier New', Courier, monospace; /* Police de type terminal */
-  border-radius: 5px;
-  margin-top: 50px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Titre H2 - Apparence de commande */
-#fin h2 {
-  font-size: 2.5em;
-  margin-bottom: 20px;
-  animation: blinkText 0.8s infinite alternate; /* Animation clignotante */
-}
-
-/* Animation de texte clignotant pour le titre */
-@keyframes blinkText {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-/* Description avec effet d'apparition type ligne de commande */
-#fin p {
-  font-size: 1.2em;
-  margin-bottom: 30px;
-  animation: typing 3s steps(30) 1s forwards; /* Effet de frappe type terminal */
-  white-space: nowrap;
-  overflow: hidden;
-  border-right: 4px solid #00ff00; /* Curseur de terminal */
-}
-
-/* Animation de "tape" du texte */
-@keyframes typing {
-  0% {
-    width: 0;
-  }
-  100% {
+/* Conteneur principal */
+.container {
+    display: grid;
+    grid-template-columns: repeat(2,1fr); /* Grille de 2 colonnes */
+    gap: 10px;
+    padding: 40px 20px;
+    transition: all 0.5s ease;
     width: 100%;
-  }
+    justify-items: center;
+    z-index: 1;
 }
 
-/* Bouton de retour avec effet style terminal */
-#fin .btn {
-  padding: 12px 25px;
-  background-color: #333; /* Fond sombre pour le bouton */
-  color: #00ff00; /* Texte vert fluo */
-  font-size: 1.1em;
-  border: 2px solid #00ff00; /* Bordure verte */
-  border-radius: 5px;
-  text-decoration: none;
-  display: inline-block;
-  cursor: pointer;
-  transition: all 0.3s ease;
+.layout-wrapper {
+    display: grid;
+    grid-template-columns: 10px 1fr; /* 1ère colonne = 250px, 2ème prend le reste */
+    gap: 20px;
+    width: 100%;
 }
 
-#fin .btn:hover {
-  background-color: #00ff00; /* Le fond devient vert au survol */
-  color: #1d1f20; /* Le texte devient noir */
-  transform: scale(1.1);
+/* Conteneur vertical */
+.container.vertical {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 10px;
 }
 
-/* Animation du fond de la section */
-#fin:before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: -50%;
-  width: 200%;
-  height: 4px;
-  background: linear-gradient(90deg, transparent, #00ff00, transparent);
-  animation: scan 2s infinite linear;
+/* Style des modules */
+.module {
+    width: 250px;
+    height: 150px;
+    background: linear-gradient(135deg, #007bff, #00c6ff);
+    margin: 10px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, background 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-@keyframes scan {
-  0% {
-    left: -50%;
-  }
-  100% {
-    left: 100%;
-  }
+/* Effet de survol des modules */
+.module:hover {
+    transform: scale(1.1);
+    background: linear-gradient(135deg, #0056b3, #0080ff);
 }
+
+/* Effet d'animation au clic */
+.module.clicked {
+    animation: bounce 0.3s ease;
+}
+
+@keyframes bounce {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Titre des modules */
+.module-title {
+    text-align: center;
+}
+
+/* Contenu des modules */
+.module-content {
+    display: none;
+    flex: 1;
+    margin: 20px;
+    padding: 30px;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    transition: opacity 0.3s ease;
+    max-width: 700px;
+    font-size: 16px;
+    color: #333;
+    animation: fadeIn 0.4s ease;
+}
+
+/* Contenu actif des modules */
+.module-content.active {
+    display: block;
+    animation: slideIn 0.5s ease forwards;
+}
+
+@keyframes slideIn {
+    0% { opacity: 0; transform: translateX(30px); }
+    100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Titres principaux */
+h2 {
+    color: #222;
+    margin-top: 0;
+}
+
+/* Paragraphes */
+p {
+    color: #555;
+    line-height: 1.6;
+}
+
+/* Wrapper de la mise en page */
+.layout-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 0 auto;
+    max-width: 1200px;
+    gap: 30px;
+    padding: 0 20px;
+}
+
+/* Animation des confettis */
+@keyframes fall {
+    0% { opacity: 1; transform: translateY(0) rotate(0); }
+    100% { opacity: 0; transform: translateY(60px) rotate(360deg); }
+}
+
+/* Section du Quiz */
+#quiz-section {
+    padding: 40px;
+    background-color: #f2f2f2;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 50px auto;
+    text-align: center;
+}
+
+#quiz-section h2 {
+    font-size: 2.5em;
+    color: #007bff;
+}
+
+#quiz-section p {
+
+    margin-left: 120;
+    font-size: 1 em;
+    margin-bottom: 30px;
+    color: #555;
+}
+
+#quiz-container {
+    margin-right: 200px;
+    margin-left: 100px;
+    background-color: lightcyan;
+    padding: 0px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.question {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.question h3 {
+    font-size: 1.5em;
+    color: #333;
+}
+
+.question label {
+    display: block;
+    font-size: 1.5em;
+    margin: 10px 0;
+    color: #555;
+}
+
+/* Bouton quiz */
+button {
+    padding: 12px 25px;
+    font-size: 1.2em;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: darkblue;
+}
+
+#quiz-result {
+    color :red;
+    background-color: darkblue;
+    text-align: center;
+    display: none;
+}
+
+#quiz-result p {
+    color:greenyellow;
+    font-size: 1.5em;
+    margin-top: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Styles du Header */
+header {
+    transform: scale(1.1);
+    background: linear-gradient(135deg, #0056b3, #0080ff);
+    background-color: #333;
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    font-size: 3em;
+    color: white;
+    margin: 0;
+    letter-spacing: 2px; /* Espacement entre les lettres pour améliorer la lisibilité */
+}
+
+header p {
+    font-size: 1.3em;
+    margin-top: 10px;
+    letter-spacing: 1px;
+    color: lightcyan;
+}
+
+/* Section générale */
+.section {
+ 
+    transform: scale(1.1);
+    background: linear-gradient(135deg, #0056b3, #0080ff);
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.section h2 {
+    font-size: 2.5em;
+    color: black;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.section p {
+    font-size: 1.2em;
+    color: #555;
+    margin: 0 auto;
+    line-height: 1.6;
+    max-width: 900px;
+    font-weight: 400;
+}
+
+/* Listes et éléments */
+ul {
+    text-align: left;
+    display: inline-block;
+    font-size: 1.1em;
+    color: #555;
+    padding-left: 20px;
+}
+
+li {
+    margin: 15px 0;
+    line-height: 1.6;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 30px 20px;
+    background-color: #333;
+    color: white;
+    margin-top: 60px;
+    font-size: 1.1em;
+}
+
+/* Typographie claire et lisible */
+p, ul, li {
+    font-family: 'Arial', sans-serif; /* Police plus lisible */
+}
+
+h2, h1 {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Titres plus visibles */
+    text-transform: uppercase; /* Titres plus marquants */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        font-size: 1em;
+    }
+
+
+
+    .section h2 {
+        font-size: 2em;
+    }
+
+    .section p {
+        font-size: 1.1em;
+    }
+
+    button {
+        font-size: 1.1em;
+    }
+}
+
 
 
