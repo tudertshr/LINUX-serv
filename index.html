@@ -41,10 +41,10 @@
       <th>Accès</th>
     </tr>
     <tr>
-  <td>00</td>
-  <td>INSTALLATION D’OPENLDAP + phpLDAPadmin sur Ubuntu </td>
-  <td><a href="#LDHCP"> 🏢 </a></td>
-</tr>
+      <td>00</td>
+      <td>INSTALLATION D’OPENLDAP + phpLDAPadmin sur Ubuntu </td>
+      <td><a href="#LDHCP"> 🏢 </a></td>
+    </tr>
 
     <tr>
       <td>01</td>
@@ -107,7 +107,7 @@
   <h2>⚙️ 00. PARAMÈTRES À CONFIGURER AVANT L’INSTALLATION</h2>
   <div class="bloc">
 
-    <button class="toggle">Voir explication</button>
+    <button class="toggle">Voir Les details</button>
 
     <div class="desc">
       <ul>
@@ -151,7 +151,7 @@
 
 
 
-<section id="LDHCP">
+<section id="LDHCP" >
   <h2>🏢 00. INSTALLATION D’OPENLDAP + phpLDAPadmin sur Ubuntu</h2>
   <div class="bloc">
 
@@ -163,12 +163,36 @@ echo "192.168.1.10 admin.dom10.dz SERV-PC" | sudo tee -a /etc/hosts</code></pre>
       <p class="desc">Définit le nom d’hôte complet du serveur (<code>admin.dom10.dz</code>) et l’ajoute au fichier hosts avec son nom NetBIOS <code>SERV-PC</code>.</p>
     </div>
 
+    <h3>Modifier le fichier hosts local</h3>
+    <div class="cmd">
+      <pre><code>sudo nano /etc/hosts</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Ajoute à la fin du fichier la ligne suivante :
+<pre><code>127.0.0.1 admin.dom10.dz</code></pre>
+Cela permet d'associer le domaine local <code>admin.dom10.dz</code> à l'adresse localhost.</p>
+    </div>
+
     <h3>Installer OpenLDAP et les utilitaires</h3>
     <div class="cmd">
       <pre><code>sudo apt update
 sudo apt install slapd ldap-utils</code></pre>
       <button class="toggle">Voir explication</button>
       <p class="desc">Met à jour les paquets et installe le serveur OpenLDAP (slapd) et les outils LDAP (ldap-utils).</p>
+    </div>
+
+    <h3>Configurer SLAPD</h3>
+    <div class="cmd">
+      <pre><code>sudo dpkg-reconfigure slapd</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Réponds aux questions comme suit :
+        <br>• Omit OpenLDAP server configuration ? → <strong>Non</strong>
+        <br>• DNS domain name : <code>dom10.dz</code>
+        <br>• Organization name : <code>Dom10 Inc.</code>
+        <br>• Administrator password : définis un mot de passe
+        <br>• Database backend : <code>MDB</code>
+        <br>• Do you want the database to be removed when slapd is purged? → <strong>Oui</strong>
+        <br>• Move old database? → <strong>Oui</strong>
+      </p>
     </div>
 
     <h3>Modifier la configuration LDAP du client</h3>
@@ -178,19 +202,6 @@ sudo apt install slapd ldap-utils</code></pre>
       <p class="desc">Dans le fichier, décommente et remplace les lignes suivantes :
 <pre><code>BASE   dc=dom10,dc=dz
 URI    ldap://admin.dom10.dz</code></pre></p>
-    </div>
-
-    <h3>Configurer le serveur LDAP avec l’assistant</h3>
-    <div class="cmd">
-      <pre><code>sudo dpkg-reconfigure slapd</code></pre>
-      <button class="toggle">Voir explication</button>
-      <p class="desc">Relance la configuration du serveur :
-        <br>• Nom de domaine DNS : <code>dom10.dz</code>
-        <br>• Organisation : <code>Dom10 Inc.</code>
-        <br>• Base DN générée : <code>dc=dom10,dc=dz</code>
-        <br>• DN admin : <code>cn=admin,dc=dom10,dc=dz</code>
-        <br>• Mot de passe : à définir.
-      </p>
     </div>
 
     <h3>Installer phpLDAPadmin</h3>
@@ -233,6 +244,13 @@ sudo systemctl restart apache2</code></pre>
       <p class="desc">Active la config Apache pour phpLDAPadmin et redémarre le serveur web Apache.</p>
     </div>
 
+    <h3>Vérifier le fonctionnement de LDAP</h3>
+    <div class="cmd">
+      <pre><code>ldapsearch -x -H ldap://127.0.0.1 -b dc=dom10,dc=dz</code></pre>
+      <button class="toggle">Voir explication</button>
+      <p class="desc">Cette commande permet de tester que le serveur LDAP fonctionne et que la base <code>dc=dom10,dc=dz</code> répond correctement.</p>
+    </div>
+
     <h3>Accéder à l’interface phpLDAPadmin</h3>
     <div class="cmd">
       <pre><code>http://admin.dom10.dz/phpldapadmin</code></pre>
@@ -245,6 +263,8 @@ sudo systemctl restart apache2</code></pre>
 
   </div>
 </section>
+
+
 
 
     <!-- Section 1 - CONFIGURATION RÉSEAU -->
